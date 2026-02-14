@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💘</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Comic Sans MS', cursive;
+    overflow: hidden;
+}
+
+.card-container {
+    perspective: 1200px;
+}
+
+.card {
+    width: 350px;
+    height: 450px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+}
+
+.card.open {
+    transform: rotateY(-180deg);
+}
+
+.front, .inside {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    backface-visibility: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    background: white;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.front {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.front h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.buttons {
+    display: flex;
+    gap: 20px;
+}
+
+button {
+    padding: 12px 22px;
+    font-size: 18px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.yes {
+    background: #ff5a8a;
+    color: white;
+}
+
+.no {
+    background: #444;
+    color: white;
+}
+
+.inside {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.inside img {
+    width: 85%;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.inside .text {
+    font-size: 20px;
+    text-align: center;
+}
+
+/* Падение эмодзи */
+.drop {
+    position: fixed;
+    top: -50px;
+    font-size: 32px;
+    animation: fall linear forwards;
+    pointer-events: none;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+}
+
+/* Shake при "Нет" */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.4s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card-container">
+    <div class="card" id="card">
+        <div class="front">
+            <h2>Ты будешь моей валентинкой? 💘</h2>
+            <div class="buttons">
+                <button class="yes" id="yesBtn">Да</button>
+                <button class="no" id="noBtn">Нет</button>
+            </div>
+        </div>
+
+        <div class="inside">
+            <!-- 👉 ЗАМЕНИ photo.jpg НА СВОЮ ФОТКУ -->
+            <img src="photo.jpg" alt="Наше фото">
+            <div class="text">
+                <strong>Love is...</strong><br>
+                быть с тобой каждый день ❤️
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔊 Звук -->
+<audio id="fartSound" preload="auto">
+    <source src="https://www.myinstants.com/media/sounds/fart.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const card = document.getElementById("card");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn  = document.getElementById("noBtn");
+const audio  = document.getElementById("fartSound");
+
+/* Разблокировка звука для iPhone */
+document.body.addEventListener("click", () => {
+    audio.play().then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+    }).catch(() => {});
+}, { once: true });
+
+yesBtn.addEventListener("click", () => {
+    card.classList.add("open");
+    hearts();
+});
+
+noBtn.addEventListener("click", () => {
+    card.classList.add("shake");
+    setTimeout(() => card.classList.remove("shake"), 400);
+
+    poop();
+
+    audio.currentTime = 0;
+    audio.play();
+
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100, 50, 200]);
+    }
+});
+
+function poop() {
+    for (let i = 0; i < 18; i++) createDrop("💩");
+}
+
+function hearts() {
+    for (let i = 0; i < 30; i++) createDrop("❤️");
+}
+
+function createDrop(symbol) {
+    const el = document.createElement("div");
+    el.className = "drop";
+    el.innerText = symbol;
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (2 + Math.random() * 2) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+}
+</script>
+
+</body>
+</html>
